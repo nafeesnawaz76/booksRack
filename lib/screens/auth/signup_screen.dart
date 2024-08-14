@@ -184,8 +184,12 @@ class SignupPageState extends State<SignupPage> {
                                 });
 
                                 await AuthFunctions.signUp(
+                                    _fullNameController.text,
                                     _emailController.text,
                                     _passwordController.text,
+                                    "",
+                                    _phoneNumberController.text,
+                                    _locationController.text,
                                     context);
 
                                 setState(() {

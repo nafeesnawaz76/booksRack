@@ -43,7 +43,7 @@ class BookDetails extends StatelessWidget {
                   top: 0,
                   child: Image.asset(
                     "assets/talash.jpeg",
-                    opacity: const AlwaysStoppedAnimation(.1),
+                    opacity: const AlwaysStoppedAnimation(.2),
                     height: 220,
                     width: MediaQuery.of(context).size.width,
                     fit: BoxFit.cover,

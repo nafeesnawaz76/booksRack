@@ -175,7 +175,7 @@ class LoginPageState extends State<LoginPage> {
                           icon: const Icon(
                             Icons.phone_android_rounded,
                           )),
-                    )
+                    ),
                   ],
                 ),
               ),
