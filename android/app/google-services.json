@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1004149758101",
+    "project_id": "kitab-ghar0",
+    "storage_bucket": "kitab-ghar0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1004149758101:android:e778ff6ddc9537bd30e39c",
+        "android_client_info": {
+          "package_name": "com.example.book"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCENoig5ULqpld97WltSLhay-vC1emzDkI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
