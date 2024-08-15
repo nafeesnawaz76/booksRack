@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:book/screens/auth/login_screen.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({super.key});
@@ -37,10 +38,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Image.asset(
-                "assets/titlelogo.png",
-                height: 150,
-              ),
+              Lottie.asset("assets/splashlogo.json", height: 200),
               const Gap(10),
               const Align(
                   alignment: Alignment.centerLeft,

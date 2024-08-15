@@ -9,34 +9,51 @@ import 'package:flutter/material.dart';
 
 class AuthFunctions {
   // ignore: prefer_final_fields
-  static FirebaseAuth _auth = FirebaseAuth.instance;
+
+  static final FirebaseAuth _auth = FirebaseAuth.instance;
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   static Stream<User?> get getAuthChange => _auth
       .authStateChanges(); //so that if user login then exit app he stays login next time
 
-  static Future<void> login(
+//Login Function
+
+  static Future<UserCredential?> login(
       String email, String password, BuildContext context) async {
-    await _auth
-        .signInWithEmailAndPassword(email: email, password: password)
-        .then((value) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Colors.green,
-          content: Text(
-            "login Success",
-            style: TextStyle(color: Color.fromARGB(255, 235, 236, 240)),
+    try {
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
+      if (userCredential.user!.emailVerified) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Colors.green,
+            content: Text(
+              "login Success",
+              style: TextStyle(color: Color.fromARGB(255, 235, 236, 240)),
+            ),
           ),
-        ),
-      );
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => Home()));
-    }).onError((Error, StackTrace) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("$Error"),
-      ));
-    });
+        );
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => Home()));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Colors.red,
+            content: Text(
+              "Email not verified,please verify your email",
+              style: TextStyle(color: Color.fromARGB(255, 235, 236, 240)),
+            ),
+          ),
+        );
+      }
+      return userCredential;
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("$Error")));
+      return null;
+    }
   }
+  // Signup Function
 
   static Future<UserCredential?> signUp(
       String fullName,
@@ -100,14 +117,16 @@ class AuthFunctions {
   static Future<void> resetPassword(String email, BuildContext context) async {
     await _auth.sendPasswordResetEmail(email: email).then((value) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           backgroundColor: Colors.green,
           content: Text(
-            "Recovery email sent successfully",
-            style: TextStyle(color: Color.fromARGB(255, 235, 236, 240)),
+            "Recovery email sent to $email",
+            style: const TextStyle(color: Color.fromARGB(255, 235, 236, 240)),
           ),
         ),
       );
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => const LoginPage()));
     }).onError((Error, StackTrace) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("$Error"),

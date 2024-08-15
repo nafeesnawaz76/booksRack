@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:book/screens/auth/login_screen.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import '../../services/firebase_auth.dart';
 
 class SignupPage extends StatefulWidget {
@@ -41,10 +42,7 @@ class SignupPageState extends State<SignupPage> {
                       child: Column(
                         children: [
                           const Gap(20),
-                          Image.asset(
-                            "assets/titlelogo.png",
-                            height: 200,
-                          ),
+                          Lottie.asset("assets/splashlogo.json", height: 200),
                           CustomTextFormField(
                             hintText: "Alex",
                             keyboardType: TextInputType.name,

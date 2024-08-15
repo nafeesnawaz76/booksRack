@@ -6,6 +6,7 @@ import 'package:gap/gap.dart';
 import 'package:book/screens/auth/forgot.dart';
 import 'package:book/screens/auth/signup_screen.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import 'phone.dart';
 
 class LoginPage extends StatefulWidget {
@@ -34,10 +35,7 @@ class LoginPageState extends State<LoginPage> {
                 child: Column(
                   children: [
                     const Gap(80),
-                    Image.asset(
-                      "assets/titlelogo.png",
-                      height: 200,
-                    ),
+                    Lottie.asset("assets/splashlogo.json", height: 200),
                     const Gap(10),
                     Form(
                       key: _formKey,
@@ -151,7 +149,7 @@ class LoginPageState extends State<LoginPage> {
                               const Gap(5),
                               GestureDetector(
                                 onTap: () {
-                                  Get.offAll(const SignupPage());
+                                  Get.offAll(() => const SignupPage());
                                 },
                                 child: const Text(
                                   "Register Here",

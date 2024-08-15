@@ -71,7 +71,7 @@ class BookDetails extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(12.0),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,7 +154,7 @@ class BookDetails extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(
-                    height: 5,
+                    height: 10,
                   ),
                   const Text(
                     "Description",
@@ -163,99 +163,11 @@ class BookDetails extends StatelessWidget {
                         color: Color.fromARGB(255, 9, 10, 12),
                         fontWeight: FontWeight.bold),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.all(4.0),
-                    child: Text(
-                      "Umeed (Hope) by Arooba Mir is a captivating Urdu novel that delves into the depths of human resilience and the enduring power of hope. The story unfolds as a poignant exploration of life's challenges, where characters grapple with adversity and strive to find their way through darkness.",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          "Rs 900",
-                          style: TextStyle(fontSize: 22, color: Colors.black),
-                        ),
-                        ElevatedButton(
-                            style: ButtonStyle(
-                              shape: WidgetStateProperty.all(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30))),
-                              backgroundColor: const WidgetStatePropertyAll(
-                                Color(0xff5563AA),
-                              ),
-                            ),
-                            onPressed: () {
-                              final user = FirebaseAuth.instance
-                                  .currentUser; // Check user authentication
-                              if (user != null) {
-                                // User is logged in
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    backgroundColor: Colors.white70,
-                                    content: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text(
-                                          "Product added successfully",
-                                          style: TextStyle(color: Colors.black),
-                                        ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const Checkout()),
-                                            );
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                                color: const Color(0xff5563AA),
-                                                borderRadius:
-                                                    BorderRadius.circular(30)),
-                                            height: 40,
-                                            width: 100,
-                                            child: const Center(
-                                                child: Text("check cart")),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                // User is not logged in
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const LoginPage()),
-                                );
-                              }
-                            },
-                            child: const Row(
-                              children: [
-                                Icon(
-                                  Icons.local_grocery_store_outlined,
-                                  color: Colors.white,
-                                ),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                Text(
-                                  "Add to cart",
-                                  style: TextStyle(color: Colors.white),
-                                )
-                              ],
-                            ))
-                      ],
+                  const Text(
+                    "Umeed (Hope) by Arooba Mir is a captivating Urdu novel that delves into the depths of human resilience and the enduring power of hope. The story unfolds as a poignant exploration of life's challenges, where characters grapple with adversity and strive to find their way through darkness.",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey,
                     ),
                   ),
                 ],
@@ -263,6 +175,89 @@ class BookDetails extends StatelessWidget {
             ),
           )
         ],
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              "Rs 900",
+              style: TextStyle(
+                  fontSize: 24,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold),
+            ),
+            ElevatedButton(
+                style: ButtonStyle(
+                  shape: WidgetStateProperty.all(RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30))),
+                  backgroundColor: const WidgetStatePropertyAll(
+                    Color(0xff5563AA),
+                  ),
+                ),
+                onPressed: () {
+                  final user = FirebaseAuth
+                      .instance.currentUser; // Check user authentication
+                  if (user != null) {
+                    // User is logged in
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor: Colors.white70,
+                        content: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              "Product added successfully",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const Checkout()),
+                                );
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: const Color(0xff5563AA),
+                                    borderRadius: BorderRadius.circular(30)),
+                                height: 30,
+                                width: 100,
+                                child: const Center(child: Text("check cart")),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  } else {
+                    // User is not logged in
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LoginPage()),
+                    );
+                  }
+                },
+                child: const Row(
+                  children: [
+                    Icon(
+                      Icons.local_grocery_store_outlined,
+                      color: Colors.white,
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                      "Add to cart",
+                      style: TextStyle(color: Colors.white),
+                    )
+                  ],
+                ))
+          ],
+        ),
       ),
     );
   }
