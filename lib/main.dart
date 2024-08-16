@@ -1,6 +1,7 @@
 // ignore_for_file: unused_import
 
 import 'package:book/firebase_options.dart';
+import 'package:book/screens/cart_screen.dart';
 import 'package:book/screens/home.dart';
 import 'package:book/screens/splash.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -33,6 +34,6 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
         theme: ThemeData(fontFamily: "Lato", useMaterial3: true),
         debugShowCheckedModeBanner: false,
-        home: const Splash());
+        home: const CartScreen());
   }
 }
