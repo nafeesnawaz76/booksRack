@@ -34,7 +34,7 @@ class AuthFunctions {
           ),
         );
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => Home()));
+            context, MaterialPageRoute(builder: (context) => const Home()));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -95,14 +95,14 @@ class AuthFunctions {
         const SnackBar(
           backgroundColor: Colors.green,
           content: Text(
-            "User Registered Successfully",
+            "Verification email sent,please check your mail inbox",
             style: TextStyle(color: Color.fromARGB(255, 235, 236, 240)),
           ),
         ),
       );
 
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => Home()));
+          context, MaterialPageRoute(builder: (context) => const LoginPage()));
 
       return userCredential; //if bool return true
     } catch (e) {

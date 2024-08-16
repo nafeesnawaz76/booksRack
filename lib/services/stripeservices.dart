@@ -11,6 +11,11 @@ class StripeService {
   String? _paymentIntentClientSecret;
 
   Future<void> makePayment(int money) async {
+    // GestureDetector(
+    //         onTap: () async {
+    //           StripeService.instance
+    //               .makePayment(int.parse(_amountController.text));
+    //         },
     try {
       final paymentIntent = await createPaymentIntent(money, "USD");
       _paymentIntentClientSecret = paymentIntent['client_secret'];

@@ -1,12 +1,12 @@
-import 'package:book/services/firebase_auth.dart';
 import 'package:book/models/product_model.dart';
 import 'package:book/screens/book_details.dart';
+import 'package:book/widgets/drawer.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
 class Home extends StatefulWidget {
-  Home({super.key});
+  const Home({super.key});
 
   @override
   State<Home> createState() => _HomeState();
@@ -47,7 +47,7 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(
-            Icons.list,
+            Icons.menu,
             size: 35,
           ),
           onPressed: () => scaffoldKey.currentState!.openDrawer(),
@@ -76,36 +76,7 @@ class _HomeState extends State<Home> {
           Gap(10),
         ],
       ),
-      drawer: Drawer(
-        backgroundColor: const Color(0xff5563AA),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  AuthFunctions.logout(context);
-                },
-                child: const Row(
-                  children: [
-                    Text(
-                      "Log out",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    SizedBox(
-                      width: 50,
-                    ),
-                    Icon(
-                      Icons.logout,
-                      color: Colors.white,
-                    )
-                  ],
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
+      drawer: const DrawerWidget(),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ListView(children: [

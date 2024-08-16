@@ -1,3 +1,4 @@
+import 'package:book/screens/cart_screen.dart';
 import 'package:book/services/stripeservices.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -22,8 +23,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           "Checkout",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
         ),
-        leading:
-            IconButton(onPressed: () {}, icon: const Icon(Icons.arrow_back)),
+        leading: IconButton(
+            onPressed: () {
+              Get.offAll(() => const CartScreen());
+            },
+            icon: const Icon(Icons.arrow_back)),
         centerTitle: true,
       ),
       body: Padding(

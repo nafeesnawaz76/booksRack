@@ -1,7 +1,9 @@
 import 'package:book/screens/auth/login_screen.dart';
-import 'package:book/checkout.dart';
+import 'package:book/screens/cart_screen.dart';
+import 'package:book/screens/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class BookDetails extends StatelessWidget {
   const BookDetails({
@@ -14,6 +16,11 @@ class BookDetails extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
+        leading: IconButton(
+            onPressed: () {
+              Get.offAll(() => Home());
+            },
+            icon: const Icon(Icons.arrow_back)),
         title: const Text(
           'Talash',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
@@ -216,7 +223,7 @@ class BookDetails extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => const Checkout()),
+                                      builder: (context) => const CartScreen()),
                                 );
                               },
                               child: Container(
@@ -234,6 +241,15 @@ class BookDetails extends StatelessWidget {
                     );
                   } else {
                     // User is not logged in
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        backgroundColor: Colors.red,
+                        content: Text(
+                          "please login to continue",
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    );
                     Navigator.push(
                       context,
                       MaterialPageRoute(

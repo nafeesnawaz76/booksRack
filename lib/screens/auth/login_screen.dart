@@ -55,7 +55,7 @@ class LoginPageState extends State<LoginPage> {
                               return null;
                             },
                           ),
-                          const SizedBox(height: 15),
+                          const SizedBox(height: 10),
                           CustomTextFormField(
                             hintText: "xyz12345",
                             icon: Icons.lock_outline,

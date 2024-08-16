@@ -34,6 +34,6 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
         theme: ThemeData(fontFamily: "Lato", useMaterial3: true),
         debugShowCheckedModeBanner: false,
-        home: const CartScreen());
+        home: const Splash());
   }
 }

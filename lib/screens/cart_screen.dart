@@ -1,3 +1,4 @@
+import 'package:book/screens/book_details.dart';
 import 'package:book/screens/checkout_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -23,8 +24,11 @@ class _CartScreenState extends State<CartScreen> {
           "My Cart",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
         ),
-        leading:
-            IconButton(onPressed: () {}, icon: const Icon(Icons.arrow_back)),
+        leading: IconButton(
+            onPressed: () {
+              Get.offAll(() => const BookDetails());
+            },
+            icon: const Icon(Icons.arrow_back)),
         centerTitle: true,
       ),
       body: SizedBox(
