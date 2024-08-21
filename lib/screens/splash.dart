@@ -1,13 +1,15 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, must_be_immutable
 
 import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:book/screens/home.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 
 class Splash extends StatefulWidget {
-  const Splash({super.key});
+  const Splash({
+    super.key,
+  });
 
   @override
   State<Splash> createState() => _SplashState();

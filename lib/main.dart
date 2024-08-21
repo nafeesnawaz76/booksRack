@@ -1,6 +1,7 @@
 // ignore_for_file: unused_import
 
 import 'package:book/firebase_options.dart';
+import 'package:book/models/product_model.dart';
 import 'package:book/screens/cart_screen.dart';
 import 'package:book/screens/home.dart';
 import 'package:book/screens/splash.dart';
@@ -22,8 +23,6 @@ void main() async {
     // ignore: avoid_print
     print('Error: $e');
   }
-
-  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {

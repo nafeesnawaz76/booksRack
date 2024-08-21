@@ -1,3 +1,4 @@
+import 'package:book/models/product_model.dart';
 import 'package:book/services/firebase_auth.dart';
 import 'package:book/screens/loading.dart';
 import 'package:book/widgets/textfield.dart';
@@ -10,7 +11,7 @@ import 'package:lottie/lottie.dart';
 import 'phone.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  LoginPage({super.key});
   @override
   LoginPageState createState() => LoginPageState();
 }
@@ -90,7 +91,7 @@ class LoginPageState extends State<LoginPage> {
                           const SizedBox(height: 10),
                           GestureDetector(
                             onTap: () {
-                              Get.offAll(const ForgotPassword());
+                              Get.offAll(ForgotPassword());
                             },
                             child: const Align(
                               alignment: Alignment.centerRight,
@@ -149,7 +150,7 @@ class LoginPageState extends State<LoginPage> {
                               const Gap(5),
                               GestureDetector(
                                 onTap: () {
-                                  Get.offAll(() => const SignupPage());
+                                  Get.offAll(() => SignupPage());
                                 },
                                 child: const Text(
                                   "Register Here",

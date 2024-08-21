@@ -1,3 +1,4 @@
+import 'package:book/models/product_model.dart';
 import 'package:book/screens/loading.dart';
 import 'package:book/widgets/textField.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,7 @@ import 'package:lottie/lottie.dart';
 import '../../services/firebase_auth.dart';
 
 class SignupPage extends StatefulWidget {
-  const SignupPage({super.key});
+  SignupPage({super.key});
 
   @override
   SignupPageState createState() => SignupPageState();
@@ -225,7 +226,7 @@ class SignupPageState extends State<SignupPage> {
                               const Gap(5),
                               GestureDetector(
                                 onTap: () {
-                                  Get.offAll(() => const LoginPage());
+                                  Get.offAll(() => LoginPage());
                                 },
                                 child: const Text(
                                   "Login!",

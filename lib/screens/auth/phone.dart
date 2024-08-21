@@ -1,3 +1,4 @@
+import 'package:book/models/product_model.dart';
 import 'package:book/screens/auth/verification_code.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -42,8 +43,7 @@ class Phone extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (context) => VerificationCode(
-                                  varificationid: verificationId,
-                                )));
+                                varificationid: verificationId)));
                   },
                   codeAutoRetrievalTimeout: (e) {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(

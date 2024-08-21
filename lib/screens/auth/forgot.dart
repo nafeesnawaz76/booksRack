@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:book/models/product_model.dart';
 import 'package:book/services/firebase_auth.dart';
 import 'package:book/widgets/textfield.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,7 @@ import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 
 class ForgotPassword extends StatefulWidget {
-  const ForgotPassword({super.key});
+  ForgotPassword({super.key});
 
   @override
   State<ForgotPassword> createState() => _ForgotPasswordState();
@@ -29,7 +30,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         elevation: 0,
         leading: IconButton(
             onPressed: () {
-              Get.offAll(() => const LoginPage());
+              Get.offAll(() => LoginPage());
             },
             icon: const Icon(Icons.arrow_back)),
       ),

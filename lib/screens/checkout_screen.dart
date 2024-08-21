@@ -1,10 +1,14 @@
+// ignore_for_file: must_be_immutable
+
+import 'package:book/models/product_model.dart';
 import 'package:book/screens/cart_screen.dart';
 import 'package:book/services/stripeservices.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CheckoutScreen extends StatefulWidget {
-  const CheckoutScreen({super.key});
+  Productmodel productModel;
+  CheckoutScreen({super.key, required this.productModel});
 
   @override
   State<CheckoutScreen> createState() => _CheckoutScreenState();
@@ -25,7 +29,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         ),
         leading: IconButton(
             onPressed: () {
-              Get.offAll(() => const CartScreen());
+              Get.offAll(() => CartScreen(
+                    productModel: widget.productModel,
+                  ));
             },
             icon: const Icon(Icons.arrow_back)),
         centerTitle: true,

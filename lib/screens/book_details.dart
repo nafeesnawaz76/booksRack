@@ -1,7 +1,11 @@
+// ignore_for_file: must_be_immutable
+
+import 'package:book/models/cart_model.dart';
 import 'package:book/models/product_model.dart';
 import 'package:book/screens/auth/login_screen.dart';
 import 'package:book/screens/cart_screen.dart';
 import 'package:book/screens/home.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -26,20 +30,29 @@ class _BookDetailsState extends State<BookDetails> {
         backgroundColor: Colors.white,
         leading: IconButton(
             onPressed: () {
-              Get.offAll(() => const Home());
+              Get.offAll(() => Home());
             },
             icon: const Icon(Icons.arrow_back)),
         title: Text(
           widget.productmodel.name,
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
         ),
         centerTitle: true,
         actions: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 0),
             child: IconButton(
               onPressed: () {},
               icon: const Icon(Icons.bookmark, size: 25),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 0, right: 12.0),
+            child: IconButton(
+              onPressed: () {
+                Get.to(() => CartScreen(productModel: widget.productmodel));
+              },
+              icon: const Icon(Icons.shopping_cart_outlined, size: 25),
             ),
           )
         ],
@@ -211,11 +224,24 @@ class _BookDetailsState extends State<BookDetails> {
                     Color(0xff5563AA),
                   ),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   final user = FirebaseAuth
                       .instance.currentUser; // Check user authentication
                   if (user != null) {
                     // User is logged in
+                    await checkProductExistence(id: user.uid);
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        backgroundColor: Colors.white70,
+                        content: Text(
+                          "Product added to cart",
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      ),
+                    );
+                  } else {
+                    // User is not logged in
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         backgroundColor: Colors.white70,
@@ -223,7 +249,7 @@ class _BookDetailsState extends State<BookDetails> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             const Text(
-                              "Product added successfully",
+                              "Login to countinue!",
                               style: TextStyle(color: Colors.black),
                             ),
                             GestureDetector(
@@ -231,7 +257,7 @@ class _BookDetailsState extends State<BookDetails> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => CartScreen()),
+                                      builder: (context) => LoginPage()),
                                 );
                               },
                               child: Container(
@@ -240,28 +266,12 @@ class _BookDetailsState extends State<BookDetails> {
                                     borderRadius: BorderRadius.circular(30)),
                                 height: 30,
                                 width: 100,
-                                child: const Center(child: Text("check cart")),
+                                child: const Center(child: Text("Login")),
                               ),
                             )
                           ],
                         ),
                       ),
-                    );
-                  } else {
-                    // User is not logged in
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        backgroundColor: Colors.red,
-                        content: Text(
-                          "please login to continue",
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      ),
-                    );
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const LoginPage()),
                     );
                   }
                 },
@@ -284,5 +294,57 @@ class _BookDetailsState extends State<BookDetails> {
         ),
       ),
     );
+  }
+
+  Future<void> checkProductExistence({
+    required String id,
+    int quantityIncrement = 1,
+  }) async {
+    final DocumentReference documentReference = FirebaseFirestore.instance
+        .collection('cart')
+        .doc(id)
+        .collection('cartOrders')
+        .doc(widget.productmodel.id.toString());
+
+    DocumentSnapshot snapshot = await documentReference.get();
+
+    if (snapshot.exists) {
+      int currentQuantity = snapshot['productQuantity'];
+      int updatedQuantity = currentQuantity + quantityIncrement;
+      double totalPrice =
+          double.parse(widget.productmodel.price.toString()) * updatedQuantity;
+
+      await documentReference.update({
+        'productQuantity': updatedQuantity,
+        'productTotalPrice': totalPrice
+      });
+
+      print("product exists");
+    } else {
+      await FirebaseFirestore.instance.collection('cart').doc(id).set(
+        {
+          'id': id,
+          'createdAt': DateTime.now(),
+        },
+      );
+
+      CartModel cartModel = CartModel(
+        id: widget.productmodel.id,
+        categoryId: widget.productmodel.categoryId,
+        name: widget.productmodel.name,
+        price: widget.productmodel.price.toString(),
+        images: widget.productmodel.image,
+        description: widget.productmodel.description,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+        productQuantity: 1,
+        productTotalPrice: double.parse(widget.productmodel.price.toString()),
+        author: widget.productmodel.author,
+      );
+
+      await documentReference.set(cartModel.toMap());
+
+      print("product added");
+    }
   }
 }

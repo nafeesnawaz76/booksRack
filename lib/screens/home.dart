@@ -6,7 +6,6 @@ import 'package:book/screens/book_details.dart';
 import 'package:book/screens/loading.dart';
 import 'package:book/widgets/categories.dart';
 import 'package:book/widgets/drawer.dart';
-import 'package:book/widgets/products.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +13,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  Home({super.key});
 
   @override
   State<Home> createState() => _HomeState();
@@ -80,7 +79,7 @@ class _HomeState extends State<Home> {
           Gap(10),
         ],
       ),
-      drawer: const DrawerWidget(),
+      drawer: DrawerWidget(),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ListView(children: [

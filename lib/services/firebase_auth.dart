@@ -34,7 +34,7 @@ class AuthFunctions {
           ),
         );
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => const Home()));
+            context, MaterialPageRoute(builder: (context) => Home()));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -102,7 +102,7 @@ class AuthFunctions {
       );
 
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const LoginPage()));
+          context, MaterialPageRoute(builder: (context) => LoginPage()));
 
       return userCredential; //if bool return true
     } catch (e) {
@@ -126,7 +126,7 @@ class AuthFunctions {
         ),
       );
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const LoginPage()));
+          context, MaterialPageRoute(builder: (context) => LoginPage()));
     }).onError((Error, StackTrace) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("$Error"),
@@ -137,7 +137,7 @@ class AuthFunctions {
   static Future<void> logout(BuildContext context) async {
     await _auth.signOut().then((value) {
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => const LoginPage()));
+          context, MaterialPageRoute(builder: (context) => LoginPage()));
     });
   }
 }

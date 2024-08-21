@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class DrawerWidget extends StatelessWidget {
-  const DrawerWidget({
-    super.key,
-  });
+  const DrawerWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -44,33 +42,54 @@ class DrawerWidget extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: EdgeInsets.all(8.0),
             child: Column(
               children: [
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.logout,
-                      color: Color(0xff5563AA),
-                    ),
-                    const SizedBox(
-                      width: 50,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        AuthFunctions.logout(context);
-                      },
-                      child: const Text(
-                        "Log out",
-                        style:
-                            TextStyle(fontSize: 18, color: Color(0xff5563AA)),
-                      ),
-                    ),
-                  ],
-                ),
+                drawerTile(
+                    text: 'Log Out',
+                    icn: Icons.logout,
+                    onpressed: () {
+                      AuthFunctions.logout(context);
+                    }),
               ],
             ),
           )
+        ],
+      ),
+    );
+  }
+}
+
+class drawerTile extends StatelessWidget {
+  const drawerTile({
+    super.key,
+    required this.text,
+    required this.icn,
+    required this.onpressed,
+  });
+  final String text;
+  final IconData icn;
+  final Function()? onpressed;
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          Icon(
+            icn,
+            color: const Color(0xff5563AA),
+          ),
+          const SizedBox(
+            width: 50,
+          ),
+          GestureDetector(
+            onTap: onpressed,
+            child: Text(
+              text,
+              style: const TextStyle(fontSize: 18, color: Color(0xff5563AA)),
+            ),
+          ),
         ],
       ),
     );
