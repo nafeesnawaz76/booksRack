@@ -1,3 +1,4 @@
+import 'package:book/models/product_model.dart';
 import 'package:book/screens/book_details.dart';
 import 'package:book/screens/checkout_screen.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,7 @@ class _CartScreenState extends State<CartScreen> {
         ),
         leading: IconButton(
             onPressed: () {
-              Get.offAll(() => const BookDetails());
+              //Get.off(BookDetails(productmodel: widget))
             },
             icon: const Icon(Icons.arrow_back)),
         centerTitle: true,

@@ -1,3 +1,4 @@
+import 'package:book/models/product_model.dart';
 import 'package:book/screens/auth/login_screen.dart';
 import 'package:book/screens/cart_screen.dart';
 import 'package:book/screens/home.dart';
@@ -5,11 +6,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class BookDetails extends StatelessWidget {
-  const BookDetails({
+class BookDetails extends StatefulWidget {
+  Productmodel productmodel;
+  BookDetails({
     super.key,
+    required this.productmodel,
   });
 
+  @override
+  State<BookDetails> createState() => _BookDetailsState();
+}
+
+class _BookDetailsState extends State<BookDetails> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,11 +26,11 @@ class BookDetails extends StatelessWidget {
         backgroundColor: Colors.white,
         leading: IconButton(
             onPressed: () {
-              Get.offAll(() => Home());
+              Get.offAll(() => const Home());
             },
             icon: const Icon(Icons.arrow_back)),
-        title: const Text(
-          'Talash',
+        title: Text(
+          widget.productmodel.name,
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
         ),
         centerTitle: true,
@@ -48,8 +56,8 @@ class BookDetails extends StatelessWidget {
               children: [
                 Positioned(
                   top: 0,
-                  child: Image.asset(
-                    "assets/talash.jpeg",
+                  child: Image.network(
+                    widget.productmodel.image[0],
                     opacity: const AlwaysStoppedAnimation(.2),
                     height: 220,
                     width: MediaQuery.of(context).size.width,
@@ -66,8 +74,8 @@ class BookDetails extends StatelessWidget {
                     margin: const EdgeInsets.symmetric(horizontal: 85),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: Image.asset(
-                        "assets/talash.jpeg",
+                      child: Image.network(
+                        widget.productmodel.image[0],
                         height: 200,
                         fit: BoxFit.fill,
                       ),
@@ -83,17 +91,17 @@ class BookDetails extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
+                      const Text(
                         "Author: ",
                         style: TextStyle(
                             fontSize: 18, color: Color.fromARGB(255, 6, 6, 8)),
                       ),
                       Text(
-                        "Arooba Amir",
-                        style: TextStyle(
+                        widget.productmodel.author,
+                        style: const TextStyle(
                             fontSize: 18,
                             color: Color(0xff5563AA),
                             fontWeight: FontWeight.bold),
@@ -170,9 +178,9 @@ class BookDetails extends StatelessWidget {
                         color: Color.fromARGB(255, 9, 10, 12),
                         fontWeight: FontWeight.bold),
                   ),
-                  const Text(
-                    "Umeed (Hope) by Arooba Mir is a captivating Urdu novel that delves into the depths of human resilience and the enduring power of hope. The story unfolds as a poignant exploration of life's challenges, where characters grapple with adversity and strive to find their way through darkness.",
-                    style: TextStyle(
+                  Text(
+                    widget.productmodel.description,
+                    style: const TextStyle(
                       fontSize: 16,
                       color: Colors.grey,
                     ),
@@ -188,9 +196,9 @@ class BookDetails extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              "Rs 900",
-              style: TextStyle(
+            Text(
+              "Rs: ${widget.productmodel.price.toString()}",
+              style: const TextStyle(
                   fontSize: 24,
                   color: Colors.black,
                   fontWeight: FontWeight.bold),
@@ -223,7 +231,7 @@ class BookDetails extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => const CartScreen()),
+                                      builder: (context) => CartScreen()),
                                 );
                               },
                               child: Container(

@@ -1,9 +1,17 @@
+// ignore_for_file: unused_import
+
+import 'package:book/models/categories_model.dart';
 import 'package:book/models/product_model.dart';
 import 'package:book/screens/book_details.dart';
+import 'package:book/screens/loading.dart';
+import 'package:book/widgets/categories.dart';
 import 'package:book/widgets/drawer.dart';
+import 'package:book/widgets/products.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -19,24 +27,20 @@ class _HomeState extends State<Home> {
     'assets/dasht.jpg',
   ];
 
-  final categories = [
-    "All",
-    "Islamic",
-    "Fantasy",
-    "Fiction",
-    "Mystery",
-    "Romantic",
-    "Horror"
-  ];
-
-  late String selectedCategory;
   var scaffoldKey = GlobalKey<ScaffoldState>();
+  DocumentSnapshot? selectedCategory;
 
-  @override
-  void initState() {
-    selectedCategory = categories[0];
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   FirebaseFirestore.instance.collection('categories').get().then((snapshot) {
+  //     if (snapshot.docs.isNotEmpty) {
+  //       selectedCategory = snapshot.docs[0];
+  //     }
+  //   });
+  // }
+
+  final _searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +86,7 @@ class _HomeState extends State<Home> {
         child: ListView(children: [
           const Gap(5),
           TextFormField(
+            controller: _searchController,
             decoration: InputDecoration(
               suffixIcon: const Icon(Icons.search),
               hintText: "Search for a book",
@@ -90,53 +95,6 @@ class _HomeState extends State<Home> {
                 borderRadius: BorderRadius.circular(30),
               ),
             ),
-          ),
-          const Gap(5),
-          const Text(
-            "Categories",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-          ),
-          SizedBox(
-            height: 50,
-            child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: categories.length,
-                itemBuilder: (context, index) {
-                  final category = categories[index];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 3.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selectedCategory = category;
-                        });
-                      },
-                      child: Chip(
-                        label: Text(
-                          category,
-                          style: TextStyle(
-                            color: selectedCategory == category
-                                ? Colors.white
-                                : Colors.black,
-                          ),
-                        ),
-                        backgroundColor: selectedCategory == category
-                            ? const Color(0xff5563AA)
-                            : Colors.white,
-                        side: const BorderSide(color: Color(0xff5563AA)),
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(30),
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                }),
-          ),
-          const Text(
-            "Today's picks",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           ),
           const Gap(5),
           CarouselSlider.builder(
@@ -164,216 +122,258 @@ class _HomeState extends State<Home> {
           ),
           const Gap(5),
           const Text(
-            "New Arrivals",
+            "Categories",
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           ),
-          SizedBox(
-            height: 255,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: allProducts.length,
-              itemBuilder: (context, index) {
-                Product_model singleBook = allProducts[index];
-                return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const BookDetails()));
-                    },
-                    child: Card(
-                      elevation: 3,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(3)),
-                      color: Colors.white,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 5, horizontal: 5),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              height: 160,
-                              width: 130,
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 4.0),
-                                child: Image.asset(
-                                  singleBook.image,
-                                  fit: BoxFit.cover,
+          FutureBuilder(
+            future: FirebaseFirestore.instance.collection('categories').get(),
+            builder:
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasError) {
+                return const Center(
+                  child: Text("Error"),
+                );
+              }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const SizedBox(
+                  height: 50,
+                  child: Center(
+                    child: LoadingScreen(),
+                  ),
+                );
+              }
+
+              if (snapshot.data!.docs.isEmpty) {
+                return const Center(
+                  child: Text("No category found!"),
+                );
+              }
+
+              if (snapshot.data != null) {
+                return SizedBox(
+                  height: 50,
+                  child: ListView.builder(
+                    itemCount: snapshot.data!.docs.length +
+                        1, // Add 1 for the "All" chip
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      if (index == 0) {
+                        // The "All" chip
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 3.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedCategory =
+                                    null; // or DocumentSnapshot(id: 'All')
+                              });
+                            },
+                            child: Chip(
+                              label: Text(
+                                "All",
+                                style: TextStyle(
+                                  color: selectedCategory == null
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
+                              ),
+                              backgroundColor: selectedCategory == null
+                                  ? const Color(0xff5563AA)
+                                  : Colors.white,
+                              side: const BorderSide(color: Color(0xff5563AA)),
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(30),
                                 ),
                               ),
                             ),
-                            const Gap(5),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    width: 130,
-                                    child: Text(
-                                      overflow: TextOverflow.ellipsis,
-                                      singleBook.name,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                  Text(
-                                    singleBook.author,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  Text(
-                                    "Price: ${singleBook.price.toString()}",
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xff5563AA),
-                                    ),
-                                  ),
-                                ],
+                          ),
+                        );
+                      } else {
+                        final category = snapshot.data!.docs[
+                            index - 1]; // Subtract 1 because of the "All" chip
+                        CategoriesModel categoriesModel = CategoriesModel(
+                          categoryId: snapshot.data!.docs[index - 1]
+                              ['categoryId'],
+                          categoryName: snapshot.data!.docs[index - 1]['title'],
+                        );
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 3.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedCategory = category;
+                              });
+                            },
+                            child: Chip(
+                              label: Text(
+                                categoriesModel.categoryName,
+                                style: TextStyle(
+                                  color: selectedCategory?.id == category.id
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
                               ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
+                              backgroundColor:
+                                  selectedCategory?.id == category.id
+                                      ? const Color(0xff5563AA)
+                                      : Colors.white,
+                              side: const BorderSide(color: Color(0xff5563AA)),
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(30),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      }
+                    },
                   ),
                 );
-              },
-            ),
-          ),
-          const Text(
-            "All Products",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-          ),
-          GridView.builder(
-            primary: false, //smooth scroll
-            shrinkWrap: true, //unbounded height
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                mainAxisSpacing: 3,
-                crossAxisSpacing: 10,
-                crossAxisCount: 2,
-                childAspectRatio: 0.7),
-            scrollDirection: Axis.vertical,
-            itemCount: allProducts.length,
-            itemBuilder: (context, index) {
-              Product_model singleProduct = allProducts[index];
-              return Card(
-                elevation: 3,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(3)),
-                color: Colors.white,
-                child: Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Center(
-                        child: SizedBox(
-                          height: 150,
-                          width: 130,
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 4.0),
-                            child: Image.asset(
-                              singleProduct.image,
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const Gap(5),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            width: 160,
-                            child: Text(
-                              singleProduct.name,
-                              overflow: TextOverflow.ellipsis,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Text(
-                            singleProduct.author,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          Text(
-                            "Price: ${singleProduct.price.toString()}",
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xff5563AA),
-                            ),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              );
+              }
+
+              return Container();
             },
           ),
+          const Gap(5),
+          const Text(
+            "Availabe Products",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          ),
+          FutureBuilder(
+              future: selectedCategory != null
+                  ? FirebaseFirestore.instance
+                      .collection('products')
+                      .where('categoryId', isEqualTo: selectedCategory?.id)
+                      .get()
+                  : FirebaseFirestore.instance.collection('products').get(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  return const Center(
+                    child: Text("Error"),
+                  );
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return SizedBox(
+                    height: Get.height / 5,
+                    child: Center(child: LoadingScreen()),
+                  );
+                }
+
+                if (snapshot.data!.docs.isEmpty) {
+                  return const Center(
+                    child: Text("No products availables"),
+                  );
+                }
+
+                if (snapshot.data != null) {
+                  return GridView.builder(
+                      primary: false, //smooth scroll
+                      shrinkWrap: true, //unbounded height
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              mainAxisSpacing: 2,
+                              crossAxisSpacing: 10,
+                              crossAxisCount: 2,
+                              childAspectRatio: 0.6),
+                      scrollDirection: Axis.vertical,
+                      itemCount: snapshot.data!.docs.length,
+                      itemBuilder: (context, index) {
+                        final productData = snapshot.data!.docs[index];
+                        Productmodel productModel = Productmodel(
+                          categoryId: productData['categoryId'],
+                          id: productData['id'],
+                          name: productData['name'],
+                          //categoryName: productData['categoryName'],
+                          price: productData['price'],
+                          image: productData['image'],
+                          description: productData['description'],
+                          isFavourite: productData['isFavourite'],
+                          status: productData['status'],
+                          author: productData['author'],
+                        );
+                        return GestureDetector(
+                          onTap: () {
+                            Get.offAll(() => BookDetails(
+                                  productmodel: productModel,
+                                ));
+                          },
+                          child: Card(
+                            elevation: 3,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            color: Colors.white,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Center(
+                                  child: SizedBox(
+                                    height: 170,
+                                    width: 140,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 4.0),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(5),
+                                        child: Image.network(
+                                          productModel.image[0].toString(),
+                                          fit: BoxFit.fill,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const Gap(5),
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 12.0, right: 12),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                        width: 160,
+                                        child: Text(
+                                          productModel.name,
+                                          //overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                              color: Color(0xff5563AA),
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      Text(
+                                        productModel.author,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      Text(
+                                        "Rs: ${productModel.price.toString()}",
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        );
+                      });
+                }
+                return Container();
+              })
         ]),
       ),
     ));
   }
 }
-
-List<Product_model> allProducts = [
-  Product_model(
-      id: "1",
-      name: "Talash",
-      image: "assets/talash.jpeg",
-      isFavourite: false,
-      price: 1400,
-      description: "jab soch badlti hai to waqt badlta hai",
-      status: "N/A",
-      author: 'Arooba Amir'),
-  Product_model(
-      id: "2",
-      name: "Sarab",
-      image: "assets/sarab.png",
-      isFavourite: false,
-      price: 1200,
-      description: "har chamakti chez sona nahi hoti",
-      status: "N/A",
-      author: 'Arooba Amir'),
-  Product_model(
-      id: "3",
-      name: "Hum kahan k sachy thay",
-      image: "assets/humKahankKSachyThay.jpeg",
-      isFavourite: false,
-      price: 900,
-      description: "kitna azab hota hai kisi ka har waqt nazr ana",
-      status: "N/A",
-      author: 'Umera Ahmed'),
-  Product_model(
-      id: "4",
-      name: "Namal",
-      image: "assets/namal.jpeg",
-      isFavourite: false,
-      price: 700,
-      description: "insano k bas main hifazat karna nahi hota",
-      status: "N/A",
-      author: 'Nimra Ahmed'),
-  Product_model(
-      id: "5",
-      name: "Umeed",
-      image: "assets/umeeed.jpeg",
-      isFavourite: false,
-      price: 1500,
-      description: "jiski umeed Allah ho uski manzil kamyabi hai",
-      status: "N/A",
-      author: 'Arooba Amir'),
-];

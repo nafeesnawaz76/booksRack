@@ -1,15 +1,16 @@
 // ignore: camel_case_types
-class Product_model {
+class Productmodel {
   late String id;
   late String name;
-  late String image;
+  late List image;
   late bool isFavourite;
   late int price;
   late String description;
   late String status;
   late String author;
+  late String categoryId;
 
-  Product_model(
+  Productmodel(
       {required this.id,
       required this.name,
       required this.image,
@@ -17,12 +18,14 @@ class Product_model {
       required this.price,
       required this.description,
       required this.status,
+      required this.categoryId,
       required this.author});
 
-  Product_model.fromJson(Map<String, dynamic> json) {
+  Productmodel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     image = json['image'];
+    categoryId = json["categoryId"];
     isFavourite = json['isFavourite'];
     price = json['price'];
     description = json['description'];
@@ -33,6 +36,7 @@ class Product_model {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
+    data["categoryId"] = this.categoryId;
     data['name'] = this.name;
     data['image'] = this.image;
     data['isFavourite'] = this.isFavourite;

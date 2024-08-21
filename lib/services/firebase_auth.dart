@@ -107,7 +107,7 @@ class AuthFunctions {
       return userCredential; //if bool return true
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("$Error"),
+        content: Text("Error:$e "),
       ));
 
       return null;
