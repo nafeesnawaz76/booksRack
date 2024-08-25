@@ -1,8 +1,7 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:book/cart_price.dart';
 import 'package:book/models/cart_model.dart';
-import 'package:book/models/product_model.dart';
-import 'package:book/screens/book_details.dart';
 import 'package:book/screens/checkout_screen.dart';
 import 'package:book/screens/loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,8 +11,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class CartScreen extends StatefulWidget {
-  Productmodel? productModel;
-  CartScreen({super.key, required this.productModel});
+  const CartScreen({super.key});
 
   @override
   State<CartScreen> createState() => _CartScreenState();
@@ -34,18 +32,18 @@ class _CartScreenState extends State<CartScreen> {
         ),
         leading: IconButton(
             onPressed: () {
-              Get.off(() => BookDetails(productmodel: widget.productModel!));
+              Get.back();
             },
             icon: const Icon(Icons.arrow_back)),
         centerTitle: true,
       ),
       body: SizedBox(
-        child: FutureBuilder(
-          future: FirebaseFirestore.instance
+        child: StreamBuilder(
+          stream: FirebaseFirestore.instance
               .collection('cart')
               .doc(user!.uid)
               .collection("cartOrders")
-              .get(),
+              .snapshots(), //change .get to snapshots when stream builder
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasError) {
@@ -62,7 +60,13 @@ class _CartScreenState extends State<CartScreen> {
 
             if (snapshot.data!.docs.isEmpty) {
               return const Center(
-                child: Text("Your cart is empty"),
+                child: Text(
+                  "Your cart is empty!",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Color(0xff5563AA)),
+                ),
               );
             }
 
@@ -70,7 +74,6 @@ class _CartScreenState extends State<CartScreen> {
               return ListView.builder(
                 primary: false, //smooth scroll
                 shrinkWrap: true, //unbounded height
-
                 scrollDirection: Axis.vertical,
                 itemCount: snapshot.data!.docs.length,
                 itemBuilder: (context, index) {
@@ -89,6 +92,7 @@ class _CartScreenState extends State<CartScreen> {
                     productQuantity: productData["productQuantity"],
                     productTotalPrice: productData["productTotalPrice"],
                   );
+                  ProductsPrice.fetchProductPrice();
                   return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4),
                       child: Card(
@@ -121,7 +125,7 @@ class _CartScreenState extends State<CartScreen> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           SizedBox(
-                                            width: 150,
+                                            width: 140,
                                             child: Text(
                                               cartmodel.name,
                                               overflow: TextOverflow.ellipsis,
@@ -155,26 +159,65 @@ class _CartScreenState extends State<CartScreen> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Checkbox(
-                                          value: value,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              value = value;
-                                            });
-                                          }),
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 5.0, right: 5),
+                                        child: GestureDetector(
+                                          onTap: () async {
+                                            await FirebaseFirestore.instance
+                                                .collection('cart')
+                                                .doc(user!.uid)
+                                                .collection('cartOrders')
+                                                .doc(cartmodel.id)
+                                                .delete();
+                                          },
+                                          child: const CircleAvatar(
+                                            backgroundColor: Colors.red,
+                                            radius: 15,
+                                            child: Icon(
+                                              Icons.delete,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                       Padding(
                                         padding:
                                             const EdgeInsets.only(bottom: 5.0),
                                         child: Row(
                                           children: [
-                                            const CircleAvatar(
-                                              radius: 14,
-                                              backgroundColor:
-                                                  Color(0xff5563AA),
-                                              child: Icon(
-                                                Icons.remove,
-                                                color: Colors.white,
-                                                size: 18,
+                                            GestureDetector(
+                                              onTap: () async {
+                                                if (cartmodel.productQuantity >
+                                                    1) {
+                                                  await FirebaseFirestore
+                                                      .instance
+                                                      .collection('cart')
+                                                      .doc(user!.uid)
+                                                      .collection('cartOrders')
+                                                      .doc(cartmodel.id)
+                                                      .update({
+                                                    'productQuantity': cartmodel
+                                                            .productQuantity -
+                                                        1,
+                                                    'productTotalPrice': (double
+                                                            .parse(cartmodel
+                                                                .price) *
+                                                        (cartmodel
+                                                                .productQuantity -
+                                                            1))
+                                                  });
+                                                }
+                                              },
+                                              child: const CircleAvatar(
+                                                radius: 14,
+                                                backgroundColor:
+                                                    Color(0xff5563AA),
+                                                child: Icon(
+                                                  Icons.remove,
+                                                  color: Colors.white,
+                                                  size: 18,
+                                                ),
                                               ),
                                             ),
                                             const Gap(8),
@@ -186,14 +229,39 @@ class _CartScreenState extends State<CartScreen> {
                                                   fontSize: 18),
                                             ),
                                             const Gap(8),
-                                            const CircleAvatar(
-                                              radius: 14,
-                                              backgroundColor:
-                                                  Color(0xff5563AA),
-                                              child: Icon(
-                                                Icons.add,
-                                                color: Colors.white,
-                                                size: 18,
+                                            GestureDetector(
+                                              onTap: () async {
+                                                if (cartmodel.productQuantity >
+                                                    0) {
+                                                  await FirebaseFirestore
+                                                      .instance
+                                                      .collection('cart')
+                                                      .doc(user!.uid)
+                                                      .collection('cartOrders')
+                                                      .doc(cartmodel.id)
+                                                      .update({
+                                                    'productQuantity': cartmodel
+                                                            .productQuantity +
+                                                        1,
+                                                    'productTotalPrice': double
+                                                            .parse(cartmodel
+                                                                .price) +
+                                                        double.parse(cartmodel
+                                                                .price) *
+                                                            (cartmodel
+                                                                .productQuantity)
+                                                  });
+                                                }
+                                              },
+                                              child: const CircleAvatar(
+                                                radius: 14,
+                                                backgroundColor:
+                                                    Color(0xff5563AA),
+                                                child: Icon(
+                                                  Icons.add,
+                                                  color: Colors.white,
+                                                  size: 18,
+                                                ),
                                               ),
                                             )
                                           ],
@@ -214,50 +282,32 @@ class _CartScreenState extends State<CartScreen> {
       ),
       bottomNavigationBar: Container(
         color: Colors.white,
-        height: 130,
+        height: 110,
         width: Get.width,
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    "Item selected",
-                    style: TextStyle(
-                        fontWeight: FontWeight.normal,
-                        fontSize: 16,
-                        color: Colors.grey),
-                  ),
-                  Text(
-                    "2",
-                    style: TextStyle(
-                        fontWeight: FontWeight.normal,
-                        fontSize: 16,
-                        color: Colors.grey),
-                  ),
-                ],
-              ),
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Total",
+                  const Text(
+                    "Sub Total",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
-                  Text(
-                    "Rs: 150",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                  ),
+                  Obx(
+                    () => Text(
+                      "Rs: ${ProductsPrice.totalPrice.value.toString()}",
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 18),
+                    ),
+                  )
                 ],
               ),
               ElevatedButton(
                 onPressed: () {
-                  Get.offAll(() => CheckoutScreen(
-                        productModel: widget.productModel!,
-                      ));
+                  Get.to(() => const CheckoutScreen());
                 },
                 style: ButtonStyle(
                     shape: WidgetStateProperty.all(RoundedRectangleBorder(

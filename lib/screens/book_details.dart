@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, use_build_context_synchronously
 
 import 'package:book/models/cart_model.dart';
 import 'package:book/models/product_model.dart';
@@ -8,6 +8,7 @@ import 'package:book/screens/home.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 
 class BookDetails extends StatefulWidget {
@@ -22,6 +23,7 @@ class BookDetails extends StatefulWidget {
 }
 
 class _BookDetailsState extends State<BookDetails> {
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +52,7 @@ class _BookDetailsState extends State<BookDetails> {
             padding: const EdgeInsets.only(left: 0, right: 12.0),
             child: IconButton(
               onPressed: () {
-                Get.to(() => CartScreen(productModel: widget.productmodel));
+                Get.to(() => const CartScreen());
               },
               icon: const Icon(Icons.shopping_cart_outlined, size: 25),
             ),
@@ -218,6 +220,8 @@ class _BookDetailsState extends State<BookDetails> {
             ),
             ElevatedButton(
                 style: ButtonStyle(
+                  minimumSize: const WidgetStatePropertyAll(Size(150, 45)),
+                  maximumSize: const WidgetStatePropertyAll(Size(150, 45)),
                   shape: WidgetStateProperty.all(RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30))),
                   backgroundColor: const WidgetStatePropertyAll(
@@ -229,8 +233,13 @@ class _BookDetailsState extends State<BookDetails> {
                       .instance.currentUser; // Check user authentication
                   if (user != null) {
                     // User is logged in
+                    setState(() {
+                      isLoading = true;
+                    });
                     await checkProductExistence(id: user.uid);
-
+                    setState(() {
+                      isLoading = false;
+                    });
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         backgroundColor: Colors.white70,
@@ -257,7 +266,7 @@ class _BookDetailsState extends State<BookDetails> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => LoginPage()),
+                                      builder: (context) => const LoginPage()),
                                 );
                               },
                               child: Container(
@@ -275,21 +284,27 @@ class _BookDetailsState extends State<BookDetails> {
                     );
                   }
                 },
-                child: const Row(
-                  children: [
-                    Icon(
-                      Icons.local_grocery_store_outlined,
-                      color: Colors.white,
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    Text(
-                      "Add to cart",
-                      style: TextStyle(color: Colors.white),
-                    )
-                  ],
-                ))
+                child: isLoading
+                    ? const SpinKitCircle(
+                        color: Colors.white,
+                        size: 40,
+                      )
+                    // ignore: prefer_const_constructors
+                    : Row(
+                        children: const [
+                          Icon(
+                            Icons.local_grocery_store_outlined,
+                            color: Colors.white,
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            "Add to cart",
+                            style: TextStyle(color: Colors.white),
+                          )
+                        ],
+                      ))
           ],
         ),
       ),

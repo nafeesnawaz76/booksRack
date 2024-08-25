@@ -1,21 +1,18 @@
 // ignore_for_file: must_be_immutable
-
-import 'package:book/models/product_model.dart';
 import 'package:book/screens/cart_screen.dart';
 import 'package:book/services/stripeservices.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CheckoutScreen extends StatefulWidget {
-  Productmodel productModel;
-  CheckoutScreen({super.key, required this.productModel});
+  const CheckoutScreen({super.key});
 
   @override
   State<CheckoutScreen> createState() => _CheckoutScreenState();
 }
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
-  bool _value = false;
+  final bool _value = false;
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +26,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         ),
         leading: IconButton(
             onPressed: () {
-              Get.offAll(() => CartScreen(
-                    productModel: widget.productModel,
-                  ));
+              Get.back();
             },
             icon: const Icon(Icons.arrow_back)),
         centerTitle: true,
@@ -61,7 +56,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       Radio(
                           value: _value,
                           groupValue: _value,
-                          onChanged: (_value) {})
+                          onChanged: (value) {})
                     ],
                   ),
                 ),
@@ -88,7 +83,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       Radio(
                           value: _value,
                           groupValue: _value,
-                          onChanged: (_value) {})
+                          onChanged: (value) {})
                     ],
                   ),
                 ),

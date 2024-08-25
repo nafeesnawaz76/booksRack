@@ -1,4 +1,3 @@
-import 'package:book/models/product_model.dart';
 import 'package:book/screens/loading.dart';
 import 'package:book/widgets/textField.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +8,7 @@ import 'package:lottie/lottie.dart';
 import '../../services/firebase_auth.dart';
 
 class SignupPage extends StatefulWidget {
-  SignupPage({super.key});
+  const SignupPage({super.key});
 
   @override
   SignupPageState createState() => SignupPageState();

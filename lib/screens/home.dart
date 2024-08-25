@@ -6,6 +6,7 @@ import 'package:book/screens/book_details.dart';
 import 'package:book/screens/loading.dart';
 import 'package:book/widgets/categories.dart';
 import 'package:book/widgets/drawer.dart';
+import 'package:book/widgets/search_delegade.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -39,8 +40,6 @@ class _HomeState extends State<Home> {
   //   });
   // }
 
-  final _searchController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -51,11 +50,11 @@ class _HomeState extends State<Home> {
         leading: IconButton(
           icon: const Icon(
             Icons.menu,
-            size: 35,
+            size: 30,
           ),
           onPressed: () => scaffoldKey.currentState!.openDrawer(),
         ),
-        toolbarHeight: 70,
+        toolbarHeight: 60,
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: const Color(0xff5563AA),
         title: const Text(
@@ -70,31 +69,25 @@ class _HomeState extends State<Home> {
             borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(10),
                 bottomRight: Radius.circular(10))),
-        actions: const [
-          CircleAvatar(
-            radius: 25,
-            foregroundImage: NetworkImage(
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQi8LeJa7ZpHPegIo-vuhZhjVon4Kcl1rht9w&s"),
-          ),
-          Gap(10),
+        actions: [
+          IconButton(
+              onPressed: () {
+                showSearch(
+                  context: context,
+                  delegate: CustomSearchDelegate(),
+                );
+              },
+              icon: const Icon(
+                Icons.search,
+                size: 30,
+              )),
+          const Gap(10),
         ],
       ),
       drawer: DrawerWidget(),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ListView(children: [
-          const Gap(5),
-          TextFormField(
-            controller: _searchController,
-            decoration: InputDecoration(
-              suffixIcon: const Icon(Icons.search),
-              hintText: "Search for a book",
-              border: OutlineInputBorder(
-                borderSide: const BorderSide(color: Color(0xff5563AA)),
-                borderRadius: BorderRadius.circular(30),
-              ),
-            ),
-          ),
           const Gap(5),
           CarouselSlider.builder(
             itemCount: imgList.length,
@@ -133,20 +126,20 @@ class _HomeState extends State<Home> {
                   child: Text("Error"),
                 );
               }
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const SizedBox(
-                  height: 50,
-                  child: Center(
-                    child: LoadingScreen(),
-                  ),
-                );
-              }
+              // if (snapshot.connectionState == ConnectionState.waiting) {
+              //   return const SizedBox(
+              //     height: 50,
+              //     child: Center(
+              //       child: LoadingScreen(),
+              //     ),
+              //   );
+              // }
 
-              if (snapshot.data!.docs.isEmpty) {
-                return const Center(
-                  child: Text("No category found!"),
-                );
-              }
+              // if (snapshot.data!.docs.isEmpty) {
+              //   return const Center(
+              //     child: Text("No category found!"),
+              //   );
+              // }
 
               if (snapshot.data != null) {
                 return SizedBox(
@@ -256,15 +249,24 @@ class _HomeState extends State<Home> {
                   );
                 }
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return SizedBox(
-                    height: Get.height / 5,
-                    child: Center(child: LoadingScreen()),
+                  return Container(
+                    color: Colors.white,
+                    height: Get.height / 3,
+                    child: const LoadingScreen(),
                   );
                 }
 
                 if (snapshot.data!.docs.isEmpty) {
-                  return const Center(
-                    child: Text("No products availables"),
+                  return const Padding(
+                    padding: EdgeInsets.only(top: 80.0),
+                    child: Center(
+                        child: Text(
+                      "No products availables!",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Color(0xff5563AA)),
+                    )),
                   );
                 }
 

@@ -1,10 +1,15 @@
+// ignore_for_file: must_be_immutable
+
+import 'package:book/screens/auth/login_screen.dart';
+import 'package:book/screens/cart_screen.dart';
 import 'package:book/services/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class DrawerWidget extends StatelessWidget {
-  const DrawerWidget({super.key});
-
+  DrawerWidget({super.key});
+  User? user = FirebaseAuth.instance.currentUser;
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -24,17 +29,17 @@ class DrawerWidget extends StatelessWidget {
                   CircleAvatar(
                     radius: 50,
                     backgroundImage: NetworkImage(
-                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQi8LeJa7ZpHPegIo-vuhZhjVon4Kcl1rht9w&s"),
+                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpd4mJRIUwqgE8D_Z2znANEbtiz4GhI4M8NQ&s"),
                   ),
                   Text(
-                    "Bala hatun",
+                    "Ali",
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
                         fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    "balahatun76@gmail.com",
+                    "ali76@gmail.com",
                     style: TextStyle(color: Colors.white),
                   )
                 ],
@@ -42,9 +47,40 @@ class DrawerWidget extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
+                drawerTile(
+                    text: 'My Cart',
+                    icn: Icons.shopping_cart_outlined,
+                    onpressed: () {
+                      if (user == null) {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text("Login Required"),
+                              content: const Text("Please login to continue."),
+                              actions: [
+                                ElevatedButton(
+                                  child: const Text("Login"),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const LoginPage()),
+                                    );
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      } else {
+                        Get.to(const CartScreen());
+                      }
+                    }),
                 drawerTile(
                     text: 'Log Out',
                     icn: Icons.logout,

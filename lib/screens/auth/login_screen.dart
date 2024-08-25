@@ -1,4 +1,3 @@
-import 'package:book/models/product_model.dart';
 import 'package:book/services/firebase_auth.dart';
 import 'package:book/screens/loading.dart';
 import 'package:book/widgets/textfield.dart';
@@ -8,10 +7,9 @@ import 'package:book/screens/auth/forgot.dart';
 import 'package:book/screens/auth/signup_screen.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
-import 'phone.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({super.key});
+  const LoginPage({super.key});
   @override
   LoginPageState createState() => LoginPageState();
 }
@@ -165,16 +163,16 @@ class LoginPageState extends State<LoginPage> {
                         ],
                       ),
                     ),
-                    const Gap(10),
-                    CircleAvatar(
-                      child: IconButton(
-                          onPressed: () {
-                            Get.offAll(() => Phone());
-                          },
-                          icon: const Icon(
-                            Icons.phone_android_rounded,
-                          )),
-                    ),
+                    // const Gap(10),
+                    // CircleAvatar(
+                    //   child: IconButton(
+                    //       onPressed: () {
+                    //         Get.offAll(() => Phone());
+                    //       },
+                    //       icon: const Icon(
+                    //         Icons.phone_android_rounded,
+                    //       )),
+                    // ),
                   ],
                 ),
               ),
